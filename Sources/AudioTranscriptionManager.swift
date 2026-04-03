@@ -33,8 +33,11 @@ class AudioTranscriptionManager {
     private var isTranscribing = false
     
     init() {
-        setupAudioEngine()
-        requestMicrophonePermission()
+        // Defer all audio setup to avoid CoreMedia crash during early app initialization on macOS 26
+        DispatchQueue.main.async { [weak self] in
+            self?.setupAudioEngine()
+            self?.requestMicrophonePermission()
+        }
     }
     
     private func setupAudioEngine() {
